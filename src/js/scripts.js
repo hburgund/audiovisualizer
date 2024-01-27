@@ -60,8 +60,9 @@ const mat = new THREE.ShaderMaterial({
 	vertexShader: document.getElementById('vertexshader').textContent,
 	fragmentShader: document.getElementById('fragmentshader').textContent
 });
+mat.needsUpdate = true; // Mark material for update
 
-const geo = new THREE.IcosahedronGeometry(4, 30 );
+const geo = new THREE.IcosahedronGeometry(2, 20 );
 const mesh = new THREE.Mesh(geo, mat);
 scene.add(mesh);
 mesh.material.wireframe = true;
