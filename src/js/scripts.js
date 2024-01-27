@@ -69,12 +69,14 @@ const listener = new THREE.AudioListener();
 camera.add(listener);
 
 const sound = new THREE.Audio(listener);
+var soundStartTime = 0;
 
 const audioLoader = new THREE.AudioLoader();
 audioLoader.load('./assets/kelcey-welcome2.mp3', function(buffer) {
 	sound.setBuffer(buffer);
 	window.addEventListener('click', function() {
 		sound.play();
+		soundStartTime = clock.elapsedTime;
 	});
 });
 
@@ -120,8 +122,25 @@ function animate() {
 	camera.lookAt(scene.position);
 	uniforms.u_time.value = clock.getElapsedTime();
 	uniforms.u_frequency.value = analyser.getAverageFrequency();
-    bloomComposer.render();
-	requestAnimationFrame(animate);
+	const displayTextElement = document.getElementById('audioText');
+
+	if (sound.isPlaying) {
+		const audioTime = sound.context.currentTime - soundStartTime;
+
+		// Example: Display text based on audio time
+		if (audioTime > 5 && audioTime < 10) { // Between 5 to 10 seconds
+				displayTextElement.innerHTML = 'First text segment';
+		} else if (audioTime > 10 && audioTime < 15) { // Between 10 to 15 seconds
+				displayTextElement.innerHTML = 'Second text segment';
+		} else if (audioTime > 20 && audioTime < 25) { // Between 10 to 15 seconds
+				displayTextElement.innerHTML = 'Ready to VOCALIZE?!?!?';
+		} else {
+				displayTextElement.innerHTML = '';
+		}
+}
+
+bloomComposer.render();
+requestAnimationFrame(animate);
 }
 animate();
 
