@@ -111,7 +111,11 @@
         return 2.2 * n_xyz;
       }
 
+      varying vec3 vPosition;
+
       void main() {
+          vPosition = position;
+
           float baseRippleIntensity = 0.2;
           float rippleScale = 2.0;
           float timeScale = 1.0;
@@ -119,7 +123,6 @@
           // Base noise for subtle ripples
           float baseNoise = pnoise(position * rippleScale + vec3(u_time * timeScale), vec3(10.0));
           float displacement = baseRippleIntensity * baseNoise;
-          // console.log(displacement);
 
           // Adjust the displacement when audio is playing
           if (u_audioPlaying != 0) {
@@ -137,8 +140,19 @@
         uniform float u_red;
         uniform float u_blue;
         uniform float u_green;
+        uniform float u_time;
+
+        varying vec3 vPosition;
+
         void main() {
-            gl_FragColor = vec4(vec3(u_red, u_green, u_blue), 1. );
+            vec3 colorA = vec3(1.0, 0.5, 0.0); // Orange
+            vec3 colorB = vec3(0.0, 0.5, 1.0); // Blue
+
+            // Mix based on the y position
+            float mixFactor = (vPosition.y + 2.0) / 4.0; // Adjust this calculation as needed
+            vec3 color = mix(colorA, colorB, mixFactor);
+
+            gl_FragColor = vec4(color, 1.0);
         }
     </script>
     <script src="./js/scripts.js" type="module"></script>
