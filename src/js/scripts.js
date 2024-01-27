@@ -108,6 +108,9 @@ bloomFolder.add(params, 'radius', 0, 1).onChange(function(value) {
 	bloomPass.radius = Number(value);
 });
 
+const rotationSpeedX = 0.005; // Rotation speed around X axis
+const rotationSpeedY = 0.005; // Rotation speed around Y axis
+
 let mouseX = 0;
 let mouseY = 0;
 document.addEventListener('mousemove', function(e) {
@@ -142,10 +145,13 @@ function animate() {
 		} else {
 				displayTextElement.innerHTML = '';
 		}
-}
+	}
 
-bloomComposer.render();
-requestAnimationFrame(animate);
+	mesh.rotation.x += rotationSpeedX;
+  mesh.rotation.y += rotationSpeedY;
+
+	bloomComposer.render();
+	requestAnimationFrame(animate);
 }
 animate();
 
