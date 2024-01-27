@@ -49,6 +49,7 @@ camera.lookAt(0, 0, 0);
 const uniforms = {
 	u_time: {type: 'f', value: 0.0},
 	u_frequency: {type: 'f', value: 0.0},
+	u_audioPlaying: { type: 'i', value: 0 }, // 0 for false, 1 for true
 	u_red: {type: 'f', value: 1.0},
 	u_green: {type: 'f', value: 1.0},
 	u_blue: {type: 'f', value: 1.0}
@@ -122,6 +123,9 @@ function animate() {
 	camera.lookAt(scene.position);
 	uniforms.u_time.value = clock.getElapsedTime();
 	uniforms.u_frequency.value = analyser.getAverageFrequency();
+	// Update the audio state uniform
+	uniforms.u_audioPlaying.value = sound.isPlaying ? 1 : 0;
+
 	const displayTextElement = document.getElementById('audioText');
 
 	if (sound.isPlaying) {
