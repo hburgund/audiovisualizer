@@ -71,8 +71,25 @@ function Icosahedron() {
       uniforms.u_frequency.value = audioAnalyser.current?.getAverageFrequency();
       uniforms.u_audioPlaying.value = sound.current?.isPlaying ? 1 : 0;
 
-      if (sound.current?.isPlaying) {
+      const displayTextElement = document.getElementById("audioText");
+      if (sound.current?.isPlaying && displayTextElement) {
         // update text
+        const audioTime =
+          sound.current.context.currentTime - soundStartTime.current;
+
+        // Example: Display text based on audio time
+        if (audioTime > 5 && audioTime < 10) {
+          // Between 5 to 10 seconds
+          displayTextElement.innerHTML = "First text segment";
+        } else if (audioTime > 10 && audioTime < 15) {
+          // Between 10 to 15 seconds
+          displayTextElement.innerHTML = "Second text segment";
+        } else if (audioTime > 20 && audioTime < 25) {
+          // Between 10 to 15 seconds
+          displayTextElement.innerHTML = "Ready to VOCALIZE?!?!?";
+        } else {
+          displayTextElement.innerHTML = "";
+        }
       }
     }
   });

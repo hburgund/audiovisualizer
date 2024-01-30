@@ -5,22 +5,34 @@ import Icosahedron from "./Icosahedron";
 
 function Visualizer() {
   return (
-    <Canvas
-      gl={{
-        antialias: true,
-        outputColorSpace: SRGBColorSpace,
-      }}
-      style={{
-        height: "100vh",
-        width: "100vw",
-        background: "#000000",
-      }}
-    >
-      <Camera />
-      <Icosahedron />
+    <div>
+      <Canvas
+        gl={{
+          antialias: true,
+          outputColorSpace: SRGBColorSpace,
+        }}
+        style={{
+          height: "100vh",
+          width: "100vw",
+          background: "#000000",
+        }}
+      >
+        <Camera />
+        <Icosahedron />
 
-      {/* <Effect /> */}
-    </Canvas>
+        {/* <Effect /> */}
+      </Canvas>
+      <div
+        id="audioText"
+        style={{
+          position: "absolute",
+          top: "40%",
+          left: "40%",
+          color: "red",
+          fontSize: "40px",
+        }}
+      ></div>
+    </div>
   );
 }
 
