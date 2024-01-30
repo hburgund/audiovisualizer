@@ -1,19 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hayley Three</title>
-    <style>
-      body {
-        margin: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <script id="vertexshader" type="vertex">
-      precision highp float;
+export const fragmentShader = ` precision highp float;
+
+      varying vec3 vPosition; // Use 'varying' for WebGL 1
+
+      void main() {
+          vec3 colorA = vec3(1.0, 0.5, 0.0); // First color
+          vec3 colorB = vec3(0.0, 0.5, 1.0); // Second color
+
+          // Calculate radial gradient factor
+          float radius = 2.0; // Adjust radius to control the spread of the gradient
+          float distanceFromCenter = length(vPosition) / radius;
+          float mixFactor = clamp(distanceFromCenter, 0.0, 1.0);
+
+          // Create the gradient by mixing two colors
+          vec3 color = mix(colorA, colorB, mixFactor);
+
+          gl_FragColor = vec4(vPosition * 0.5 + 0.5, 1.0); // This will visualize the vPosition values
+      }`;
+
+export const vertexShader = `
+precision highp float;
       out vec3 vPosition; // Pass to fragment shader
 
       uniform float u_time;
@@ -136,39 +141,5 @@
           vec3 newPosition = position + normal * displacement;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
       }
-    </script>
-    <script id="fragmentshader" type="fragment">
-      precision highp float;
-
-      varying vec3 vPosition; // Use 'varying' for WebGL 1
-
-      void main() {
-          vec3 colorA = vec3(1.0, 0.5, 0.0); // First color
-          vec3 colorB = vec3(0.0, 0.5, 1.0); // Second color
-
-          // Calculate radial gradient factor
-          float radius = 2.0; // Adjust radius to control the spread of the gradient
-          float distanceFromCenter = length(vPosition) / radius;
-          float mixFactor = clamp(distanceFromCenter, 0.0, 1.0);
-
-          // Create the gradient by mixing two colors
-          vec3 color = mix(colorA, colorB, mixFactor);
-
-          gl_FragColor = vec4(vPosition * 0.5 + 0.5, 1.0); // This will visualize the vPosition values
-      }
-    </script>
-
-    <script src="./js/scripts.js" type="module"></script>
-    <!-- Display text on top of animation -->
-    <div
-      id="audioText"
-      style="
-        position: absolute;
-        top: 40%;
-        left: 40%;
-        color: red;
-        font-size: 40px;
-      "
-    ></div>
-  </body>
-</html>
+      
+`;
