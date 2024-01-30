@@ -1,10 +1,16 @@
 import { useRef } from "react";
 
-import { ShaderMaterial } from "three";
-import { fragmentShader, vertexShader } from "../../three/shaders";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
+import { AudioLoader, IcosahedronGeometry, Mesh, ShaderMaterial } from "three";
+import { fragmentShader, vertexShader } from "../../three/shaders";
+
+import welcomeAudio from "../../assets/kelcey-welcome2.mp3";
+const rotationSpeedX = 0.005; // Rotation speed around X axis
+const rotationSpeedY = 0.005; // Rotation speed around Y axis
+
 function Icosahedron() {
-  const material = useRef<ShaderMaterial>(null);
+  const mesh = useRef<Mesh<IcosahedronGeometry, ShaderMaterial>>(null);
 
   const { red, green, blue } = useControls({
     red: { value: 1, min: 0.0, max: 1.0 },
@@ -16,10 +22,21 @@ function Icosahedron() {
     },
   });
 
+  useFrame(({ clock }) => {
+    if (mesh.current) {
+      mesh.current.rotation.x += rotationSpeedX;
+      mesh.current.rotation.y += rotationSpeedY;
+
+      mesh.current.material.uniforms.u_time.value = clock.getElapsedTime();
+    }
+  });
+
+  const three = useThree();
+  useLoader(AudioLoader, welcomeAudio);
+
   return (
-    <mesh>
+    <mesh ref={mesh}>
       <shaderMaterial
-        ref={material}
         uniforms={{
           u_time: { value: 0.0 },
           u_frequency: { value: 0.0 },
