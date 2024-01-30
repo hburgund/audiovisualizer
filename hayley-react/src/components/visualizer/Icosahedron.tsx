@@ -1,8 +1,16 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
-import { AudioLoader, IcosahedronGeometry, Mesh, ShaderMaterial } from "three";
+import {
+  Audio,
+  AudioAnalyser,
+  AudioListener,
+  AudioLoader,
+  IcosahedronGeometry,
+  Mesh,
+  ShaderMaterial,
+} from "three";
 import { fragmentShader, vertexShader } from "../../three/shaders";
 
 import welcomeAudio from "../../assets/kelcey-welcome2.mp3";
@@ -22,17 +30,52 @@ function Icosahedron() {
     },
   });
 
+  const three = useThree();
+
+  const sound = useRef<Audio>();
+  const audioAnalyser = useRef<AudioAnalyser>();
+
+  const soundStartTime = useRef<number>(0);
+
+  useEffect(() => {
+    const listener = new AudioListener();
+    three.set(({ camera }) => {
+      camera.add(listener);
+    });
+    sound.current = new Audio(listener);
+    const audioLoader = new AudioLoader();
+
+    audioLoader.load(welcomeAudio, (buffer) => {
+      if (sound.current) {
+        sound.current.setBuffer(buffer);
+
+        window.addEventListener("click", () => {
+          if (sound.current) {
+            sound.current.play();
+            soundStartTime.current = three.clock.elapsedTime;
+          }
+        });
+      }
+    });
+
+    audioAnalyser.current = new AudioAnalyser(sound.current, 32);
+  }, []);
+
   useFrame(({ clock }) => {
     if (mesh.current) {
       mesh.current.rotation.x += rotationSpeedX;
       mesh.current.rotation.y += rotationSpeedY;
 
-      mesh.current.material.uniforms.u_time.value = clock.getElapsedTime();
+      const uniforms = mesh.current.material.uniforms;
+      uniforms.u_time.value = clock.getElapsedTime();
+      uniforms.u_frequency.value = audioAnalyser.current?.getAverageFrequency();
+      uniforms.u_audioPlaying.value = sound.current?.isPlaying ? 1 : 0;
+
+      if (sound.current?.isPlaying) {
+        // update text
+      }
     }
   });
-
-  const three = useThree();
-  useLoader(AudioLoader, welcomeAudio);
 
   return (
     <mesh ref={mesh}>
