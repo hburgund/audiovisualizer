@@ -66,10 +66,14 @@ function Icosahedron() {
       mesh.current.rotation.x += rotationSpeedX;
       mesh.current.rotation.y += rotationSpeedY;
 
-      const uniforms = mesh.current.material.uniforms;
-      uniforms.u_time.value = clock.getElapsedTime();
-      uniforms.u_frequency.value = audioAnalyser.current?.getAverageFrequency();
-      uniforms.u_audioPlaying.value = sound.current?.isPlaying ? 1 : 0;
+      mesh.current.material.uniforms.u_time.value = clock.getElapsedTime();
+      mesh.current.material.uniforms.u_frequency.value =
+        audioAnalyser.current?.getAverageFrequency();
+
+      mesh.current.material.uniforms.u_audioPlaying.value = sound.current
+        ?.isPlaying
+        ? 1
+        : 0;
 
       const displayTextElement = document.getElementById("audioText");
       if (sound.current?.isPlaying && displayTextElement) {
