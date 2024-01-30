@@ -39,9 +39,7 @@ function Icosahedron() {
 
   useEffect(() => {
     const listener = new AudioListener();
-    three.set(({ camera }) => {
-      camera.add(listener);
-    });
+    three.camera.add(listener);
     sound.current = new Audio(listener);
     const audioLoader = new AudioLoader();
 
