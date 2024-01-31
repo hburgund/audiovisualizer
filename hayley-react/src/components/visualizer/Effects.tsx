@@ -5,7 +5,13 @@ import { UnrealBloomPass, RenderPass } from "three-stdlib";
 
 import { Effects } from "@react-three/drei";
 import { useControls } from "leva";
-import { Audio, AudioAnalyser, AudioListener, Vector2 } from "three";
+import {
+  Audio,
+  AudioAnalyser,
+  AudioContext,
+  AudioListener,
+  Vector2,
+} from "three";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { useVisualizer } from "../../context/VisualizerContext";
 
@@ -14,7 +20,7 @@ extend({ UnrealBloomPass, OutputPass, RenderPass });
 const EffectsComposer = () => {
   const { scene, camera } = useThree();
 
-  const params = useControls("Bloom", {
+  const [params, setParams] = useControls("Bloom", () => ({
     threshold: {
       value: 0.5,
       min: 0.0,
@@ -30,7 +36,7 @@ const EffectsComposer = () => {
       min: 0.0,
       max: 1.0,
     },
-  });
+  }));
 
   const aspect = useMemo(
     () => new Vector2(window.innerWidth, window.innerHeight),
@@ -39,9 +45,10 @@ const EffectsComposer = () => {
 
   const { mode } = useVisualizer();
 
-  const audioAnalyzer = useRef<AudioAnalyser>();
+  const audioAnalyzer = useRef<AnalyserNode>();
 
   useEffect(() => {
+    let userMediaStream: MediaStream | undefined;
     if (mode === "listening") {
       const listener = new AudioListener();
 
@@ -54,20 +61,38 @@ const EffectsComposer = () => {
       const constraints = { audio: true, video: false };
 
       navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-        if (!listener) return;
+        const context = AudioContext.getContext();
+        const source = context.createMediaStreamSource(stream);
+        audioAnalyzer.current = context.createAnalyser();
+        source.connect(audioAnalyzer.current);
 
-        const sound = new Audio(listener);
-
-        sound.setMediaStreamSource(stream);
-
-        // create an AudioAnalyser, passing in the sound and desired fftSize
-        audioAnalyzer.current = new AudioAnalyser(sound, 32);
+        userMediaStream = stream;
+      });
+    } else {
+      // stop getting audio
+      userMediaStream?.getTracks().forEach((track) => track.stop());
+      setParams({
+        radius: 0.8,
       });
     }
   }, [mode]);
 
   useFrame(() => {
-    console.log(audioAnalyzer.current?.getAverageFrequency());
+    // get the amplitude
+    if (mode === "listening" && audioAnalyzer.current) {
+      const array = new Uint8Array(audioAnalyzer.current.frequencyBinCount);
+      audioAnalyzer.current.getByteFrequencyData(array);
+
+      const average = array.reduce((a, b) => a + b, 0) / array.length;
+
+      function activation(x: number) {
+        return x / 255;
+      }
+
+      setParams({
+        radius: activation(average),
+      });
+    }
   });
 
   return (
