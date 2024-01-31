@@ -2,6 +2,10 @@ export const fragmentShader = ` precision highp float;
 
       varying vec3 vPosition; // Use 'varying' for WebGL 1
 
+      uniform float u_red;
+      uniform float u_green;
+      uniform float u_blue;
+
       void main() {
           vec3 colorA = vec3(1.0, 0.5, 0.0); // First color
           vec3 colorB = vec3(0.0, 0.5, 1.0); // Second color
@@ -12,9 +16,9 @@ export const fragmentShader = ` precision highp float;
           float mixFactor = clamp(distanceFromCenter, 0.0, 1.0);
 
           // Create the gradient by mixing two colors
-          vec3 color = mix(colorA, colorB, mixFactor);
+          vec4 color = vec4(vPosition * 0.5 + 0.5, 1.0);
 
-          gl_FragColor = vec4(vPosition * 0.5 + 0.5, 1.0); // This will visualize the vPosition values
+          gl_FragColor =  vec4(color.x * u_red, color.y * u_green, color.z * u_blue, 1.0);
       }`;
 
 export const vertexShader = `

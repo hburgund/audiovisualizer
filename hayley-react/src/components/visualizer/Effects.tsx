@@ -1,17 +1,11 @@
 import { extend, useFrame, useThree } from "@react-three/fiber";
 
 import { useEffect, useMemo, useRef } from "react";
-import { UnrealBloomPass, RenderPass } from "three-stdlib";
+import { RenderPass, UnrealBloomPass } from "three-stdlib";
 
 import { Effects } from "@react-three/drei";
 import { useControls } from "leva";
-import {
-  Audio,
-  AudioAnalyser,
-  AudioContext,
-  AudioListener,
-  Vector2,
-} from "three";
+import { AudioContext, AudioListener, Vector2 } from "three";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { useVisualizer } from "../../context/VisualizerContext";
 

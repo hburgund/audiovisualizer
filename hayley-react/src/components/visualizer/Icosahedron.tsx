@@ -22,7 +22,7 @@ function Icosahedron() {
   const { red, green, blue, rotationSpeedX, rotationSpeedY, geometry } =
     useControls("Icosahedron", {
       red: {
-        value: 1,
+        value: 1.0,
         min: 0.0,
         max: 1.0,
       },
@@ -141,9 +141,9 @@ function Icosahedron() {
       u_time: { value: 0.0 },
       u_frequency: { value: 0.0 },
       u_audioPlaying: { value: 0 }, // 0 for false, 1 for true
-      u_red: { value: red },
-      u_green: { value: green },
-      u_blue: { value: blue },
+      u_red: { value: 1.0 },
+      u_green: { value: 1.0 },
+      u_blue: { value: 1.0 },
     };
   }, []);
 
