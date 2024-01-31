@@ -19,34 +19,36 @@ import { useVisualizer } from "../../context/VisualizerContext";
 function Icosahedron() {
   const mesh = useRef<Mesh<IcosahedronGeometry, ShaderMaterial>>(null);
 
-  const { red, green, blue, rotationSpeedX, rotationSpeedY, geometry } =
-    useControls("Icosahedron", {
-      red: {
-        value: 1.0,
-        min: 0.0,
-        max: 1.0,
-      },
-      green: { value: 1.0, min: 0.0, max: 1.0 },
-      blue: {
-        value: 1.0,
-        min: 0.0,
-        max: 1.0,
-      },
-      rotationSpeedX: {
-        value: 0.005,
-        min: 0.0,
-        max: 0.05,
-      },
-      rotationSpeedY: {
-        value: 0.005,
-        min: 0.0,
-        max: 0.05,
-      },
-      geometry: {
-        value: "icosahedron",
-        options: ["icosahedron", "torus"],
-      },
-    });
+  const [
+    { red, green, blue, rotationSpeedX, rotationSpeedY, geometry },
+    setParams,
+  ] = useControls("Icosahedron", () => ({
+    red: {
+      value: 1.0,
+      min: 0.0,
+      max: 1.0,
+    },
+    green: { value: 1.0, min: 0.0, max: 1.0 },
+    blue: {
+      value: 1.0,
+      min: 0.0,
+      max: 1.0,
+    },
+    rotationSpeedX: {
+      value: 0.005,
+      min: 0.0,
+      max: 0.05,
+    },
+    rotationSpeedY: {
+      value: 0.005,
+      min: 0.0,
+      max: 0.05,
+    },
+    geometry: {
+      value: "icosahedron",
+      options: ["icosahedron", "torus"],
+    },
+  }));
 
   const three = useThree();
 
@@ -88,6 +90,15 @@ function Icosahedron() {
     } else {
       if (sound.current?.isPlaying) {
         sound.current.stop();
+      }
+
+      if (mode === "listening") {
+        // zero green blue
+        setParams({
+          red: 1.0,
+          green: 0.0,
+          blue: 0.0,
+        });
       }
     }
   }, [mode]);
