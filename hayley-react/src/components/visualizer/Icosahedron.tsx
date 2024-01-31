@@ -87,6 +87,12 @@ function Icosahedron() {
       //   }
       // });
       sound.current.play();
+
+      setParams({
+        red: 1.0,
+        green: 1.0,
+        blue: 1.0,
+      });
     } else {
       if (sound.current?.isPlaying) {
         sound.current.stop();

@@ -62,10 +62,16 @@ const EffectsComposer = () => {
 
         userMediaStream = stream;
       });
+
+      setParams({
+        threshold: 0.2,
+        strength: 0.4,
+      });
     } else {
       // stop getting audio
       userMediaStream?.getTracks().forEach((track) => track.stop());
       setParams({
+        threshold: 0.5,
         radius: 0.8,
       });
     }
