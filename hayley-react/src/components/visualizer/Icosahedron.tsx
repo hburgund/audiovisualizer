@@ -19,9 +19,8 @@ import { useVisualizer } from "../../context/VisualizerContext";
 function Icosahedron() {
   const mesh = useRef<Mesh<IcosahedronGeometry, ShaderMaterial>>(null);
 
-  const { red, green, blue, rotationSpeedX, rotationSpeedY } = useControls(
-    "Icosahedron",
-    {
+  const { red, green, blue, rotationSpeedX, rotationSpeedY, geometry } =
+    useControls("Icosahedron", {
       red: {
         value: 1,
         min: 0.0,
@@ -43,8 +42,11 @@ function Icosahedron() {
         min: 0.0,
         max: 0.05,
       },
-    }
-  );
+      geometry: {
+        value: "icosahedron",
+        options: ["icosahedron", "torus"],
+      },
+    });
 
   const three = useThree();
 
@@ -154,7 +156,11 @@ function Icosahedron() {
         wireframe
       />
 
-      <torusGeometry args={[1.5, 0.7, 20, 80]} />
+      {geometry === "torus" ? (
+        <torusGeometry args={[1.5, 0.7, 20, 80]} />
+      ) : (
+        <icosahedronGeometry args={[2, 20]} />
+      )}
     </mesh>
   );
 }
