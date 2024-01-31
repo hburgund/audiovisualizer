@@ -36,7 +36,7 @@ const EffectsComposer = () => {
     []
   );
   return (
-    <Effects disableGamma>
+    <Effects>
       <renderPass attach={"passes"} camera={camera} scene={scene} />
       {/* @ts-ignore */}
       <unrealBloomPass
