@@ -1,44 +1,55 @@
 import { extend, useThree } from "@react-three/fiber";
-import { EffectComposer } from "@react-three/postprocessing";
-import { useWindowSize } from "@uidotdev/usehooks";
-// import { EffectComposer } from "@react-three/postprocessing";
+
 import { useMemo } from "react";
+import { UnrealBloomPass, RenderPass } from "three-stdlib";
+
+import { Effects } from "@react-three/drei";
+import { useControls } from "leva";
 import { Vector2 } from "three";
-import {
-  OutputPass,
-  RenderPass,
-  UnrealBloomPass,
-} from "three/examples/jsm/Addons.js";
+import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 
-const params = {
-  red: 1.0,
-  green: 1.0,
-  blue: 1.0,
-  threshold: 0.5,
-  strength: 0.5,
-  radius: 0.8,
-};
-extend({ EffectComposer, RenderPass, UnrealBloomPass, OutputPass });
+extend({ UnrealBloomPass, OutputPass, RenderPass });
 
-const Effect = () => {
-  const three = useThree();
+const EffectsComposer = () => {
+  const { scene, camera } = useThree();
 
-  const { width, height } = useWindowSize();
+  const params = useControls("Bloom", {
+    threshold: {
+      value: 0.5,
+      min: 0.0,
+      max: 1.0,
+    },
+    strength: {
+      value: 0.5,
+      min: 0.0,
+      max: 1.0,
+    },
+    radius: {
+      value: 0.8,
+      min: 0.0,
+      max: 1.0,
+    },
+  });
 
+  const aspect = useMemo(
+    () => new Vector2(window.innerWidth, window.innerHeight),
+    []
+  );
   return (
-    <EffectComposer>
-      <renderPass attach="passes" args={[three.scene, three.camera]} />
+    <Effects disableGamma>
+      <renderPass attach={"passes"} camera={camera} scene={scene} />
+      {/* @ts-ignore */}
       <unrealBloomPass
-        attachArray="passes"
-        args={[
-          width / height,
-          params.strength,
-          params.radius,
-          params.threshold,
-        ]}
+        threshold={params.threshold}
+        strength={params.strength}
+        radius={params.radius}
+        args={[aspect]}
+        resolution={aspect}
       />
-    </EffectComposer>
+      {/* @ts-ignore */}
+      <outputPass attach="passes" />
+    </Effects>
   );
 };
 
-export default Effect;
+export default EffectsComposer;

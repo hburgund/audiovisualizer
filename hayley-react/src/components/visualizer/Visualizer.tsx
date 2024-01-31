@@ -2,6 +2,7 @@ import { Canvas } from "@react-three/fiber";
 import { SRGBColorSpace } from "three";
 import Camera from "./Camera";
 import Icosahedron from "./Icosahedron";
+import Effect from "./Effects";
 
 function Visualizer() {
   return (
@@ -20,7 +21,7 @@ function Visualizer() {
         <Camera />
         <Icosahedron />
 
-        {/* <Effect /> */}
+        <Effect />
       </Canvas>
       <div
         id="audioText"
