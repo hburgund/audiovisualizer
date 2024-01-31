@@ -15,25 +15,36 @@ import { fragmentShader, vertexShader } from "../../three/shaders";
 
 import welcomeAudio from "../../assets/kelcey-welcome2.mp3";
 import { useVisualizer } from "../../context/VisualizerContext";
-const rotationSpeedX = 0.005; // Rotation speed around X axis
-const rotationSpeedY = 0.005; // Rotation speed around Y axis
 
 function Icosahedron() {
   const mesh = useRef<Mesh<IcosahedronGeometry, ShaderMaterial>>(null);
 
-  const { red, green, blue } = useControls("Icosahedron", {
-    red: {
-      value: 1,
-      min: 0.0,
-      max: 1.0,
-    },
-    green: { value: 1.0, min: 0.0, max: 1.0 },
-    blue: {
-      value: 1.0,
-      min: 0.0,
-      max: 1.0,
-    },
-  });
+  const { red, green, blue, rotationSpeedX, rotationSpeedY } = useControls(
+    "Icosahedron",
+    {
+      red: {
+        value: 1,
+        min: 0.0,
+        max: 1.0,
+      },
+      green: { value: 1.0, min: 0.0, max: 1.0 },
+      blue: {
+        value: 1.0,
+        min: 0.0,
+        max: 1.0,
+      },
+      rotationSpeedX: {
+        value: 0.005,
+        min: 0.0,
+        max: 0.05,
+      },
+      rotationSpeedY: {
+        value: 0.005,
+        min: 0.0,
+        max: 0.05,
+      },
+    }
+  );
 
   const three = useThree();
 
@@ -143,7 +154,7 @@ function Icosahedron() {
         wireframe
       />
 
-      <icosahedronGeometry args={[2, 20]} />
+      <torusGeometry args={[1.5, 0.7, 20, 80]} />
     </mesh>
   );
 }
