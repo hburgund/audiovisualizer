@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
@@ -14,7 +14,6 @@ import {
 } from "three";
 import { fragmentShader, vertexShader } from "../../three/shaders";
 
-import welcomeAudio from "../../assets/kelcey-welcome2.mp3";
 import { useVisualizer } from "../../context/VisualizerContext";
 import { useAudioContext } from "../../context/AudioContext";
 
@@ -74,6 +73,13 @@ function Icosahedron() {
 
   const audioContext = useAudioContext();
 
+  const audioElement = useMemo(
+    () => document.getElementById("visualizer-audio") as HTMLMediaElement,
+    []
+  );
+
+  const isPlaying = useRef(false);
+
   useEffect(() => {
     AudioContext.setContext(audioContext);
 
@@ -81,32 +87,32 @@ function Icosahedron() {
     three.camera.add(listener);
     sound.current = new Audio(listener);
 
-    if (sound.current && !sound.current?.isPlaying) {
-      const audioLoader = new AudioLoader();
-
-      audioLoader.load(welcomeAudio, (buffer) => {
-        if (sound.current) {
-          sound.current.setBuffer(buffer);
-          sound.current.setLoop(true);
-        }
-      });
-    }
+    sound.current.setMediaElementSource(audioElement);
 
     audioAnalyser.current = new AudioAnalyser(sound.current, 32);
+
+    function onPlay() {
+      isPlaying.current = true;
+    }
+    function onPause() {
+      isPlaying.current = false;
+    }
+
+    audioElement.addEventListener("play", onPlay);
+    audioElement.addEventListener("pause", onPause);
+
+    return () => {
+      audioElement.removeEventListener("play", onPlay);
+      audioElement.removeEventListener("pause", onPause);
+    };
   }, []);
 
   const { mode } = useVisualizer();
 
   useEffect(() => {
     let userMediaStream: MediaStream | undefined;
-    if (mode === "speaking" && sound.current && !sound.current?.isPlaying) {
-      // window.addEventListener("click", () => {
-      //   if (sound.current) {
-      //     sound.current.play();
-      //     soundStartTime.current = three.clock.elapsedTime;
-      //   }
-      // });
-      sound.current.play();
+    if (mode === "speaking" && sound.current && !isPlaying.current) {
+      audioElement.play();
 
       setParams({
         red: 1.0,
@@ -114,8 +120,8 @@ function Icosahedron() {
         blue: 1.0,
       });
     } else {
-      if (sound.current?.isPlaying) {
-        sound.current.stop();
+      if (isPlaying.current) {
+        audioElement.pause();
       }
     }
 
@@ -158,8 +164,7 @@ function Icosahedron() {
       mesh.current.material.uniforms.u_frequency.value =
         audioAnalyser.current?.getAverageFrequency();
 
-      mesh.current.material.uniforms.u_audioPlaying.value = sound.current
-        ?.isPlaying
+      mesh.current.material.uniforms.u_audioPlaying.value = isPlaying.current
         ? 1
         : 0;
 
