@@ -15,12 +15,13 @@ type Props = {
 
   displayText: string;
 };
-function Visualizer(props: Props) {
+function Visualizer({ mode, setMode, displayText }: Props) {
   return (
     <AudioContextProvider>
       <VisualizerContext.Provider
         value={{
-          ...props,
+          mode,
+          setMode,
         }}
       >
         <div>
@@ -40,16 +41,19 @@ function Visualizer(props: Props) {
 
             <Effect />
           </Canvas>
+          {/* display a text */}
           <div
-            id="audioText"
             style={{
-              position: "absolute",
-              top: "40%",
-              left: "40%",
-              color: "red",
-              fontSize: "40px",
+              position: "fixed",
+              top: "80%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              color: "white",
+              fontSize: "2rem",
             }}
-          ></div>
+          >
+            {displayText}
+          </div>
         </div>
       </VisualizerContext.Provider>
     </AudioContextProvider>
