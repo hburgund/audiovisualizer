@@ -10,10 +10,10 @@ import Effect from "./Effects";
 import Icosahedron from "./Icosahedron";
 
 type Props = {
-  // mode is useState return value
   mode: VisualizerContextType["mode"];
-  // setMode is useState setter
   setMode: (mode: VisualizerContextType["mode"]) => void;
+
+  displayText: string;
 };
 function Visualizer(props: Props) {
   return (

@@ -1,7 +1,7 @@
 import { useControls } from "leva";
+import { useState } from "react";
 import Visualizer from "./components/visualizer/Visualizer";
 import { VisualizerContextType } from "./context/VisualizerContext";
-import { useMemo, useState } from "react";
 
 function App() {
   const [mode, setMode] = useState<VisualizerContextType["mode"]>("neutral");
@@ -16,10 +16,13 @@ function App() {
     },
   }));
 
-  const contextValue = useMemo(() => {
-    return { mode, setMode };
-  }, [mode]);
-  return <Visualizer {...contextValue} />;
+  return (
+    <Visualizer
+      mode={mode}
+      setMode={setMode}
+      displayText="Welcome to the visualizer"
+    />
+  );
 }
 
 export default App;
