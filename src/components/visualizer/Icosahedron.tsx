@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
@@ -7,15 +7,18 @@ import {
   AudioAnalyser,
   AudioContext,
   AudioListener,
-  AudioLoader,
+  Color,
   IcosahedronGeometry,
   Mesh,
+  PointLight,
   ShaderMaterial,
+  Vector3,
 } from "three";
 import { fragmentShader, vertexShader } from "../../three/shaders";
 
-import { useVisualizer } from "../../context/VisualizerContext";
 import { useAudioContext } from "../../context/AudioContext";
+import { useVisualizer } from "../../context/VisualizerContext";
+import PointLightWithHelper from "./PointLightWithHelper";
 
 function Icosahedron() {
   const mesh = useRef<Mesh<IcosahedronGeometry, ShaderMaterial>>(null);
@@ -232,9 +235,34 @@ function Icosahedron() {
         )}
       </mesh>
       <mesh>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshBasicMaterial color="black" wireframe opacity={1} />
+        <circleGeometry args={[1.5, 32, 32]} />
+        <shaderMaterial
+          vertexShader={` varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }`}
+          fragmentShader={`
+                     varying vec2 vUv;
+      void main() {
+          float outerRadius = 1.5; // Circle's outer radius
+          float innerRadius = 1.0; // Radius where transparency gradient starts
+          // Transform vUv to range from 0 at the center to outerRadius at the edge
+          vec2 transformedUv = (vUv - vec2(0.5, 0.5)) * outerRadius * 2.0;
+          float distanceFromCenter = length(transformedUv);
+          float alpha = 1.0;
+          if (distanceFromCenter > innerRadius) {
+              // Apply transparency gradient between innerRadius and outerRadius
+              alpha = 1.0 - smoothstep(innerRadius, outerRadius, distanceFromCenter);
+          }
+          // Set color to black, with calculated alpha for transparency effect
+          gl_FragColor = vec4(0.0, 0.0, 0.0, alpha);
+      }
+          `}
+          transparent
+        />
       </mesh>
+      {/* <PointLightWithHelper position={[0, 0, 0]} /> */}
     </>
   );
 }

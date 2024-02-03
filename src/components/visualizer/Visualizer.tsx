@@ -41,7 +41,6 @@ function Visualizer({ mode, setMode, displayText, audioContext }: Props) {
           >
             <Camera />
             <Icosahedron />
-
             <Effect />
           </Canvas>
           {/* display a text */}

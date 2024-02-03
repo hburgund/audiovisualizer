@@ -1,26 +1,23 @@
 import { PerspectiveCamera } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-
-import { useEffect, useRef } from "react";
 
 const Camera = () => {
-  const mouseX = useRef(0);
-  const mouseY = useRef(0);
+  // const mouseX = useRef(0);
+  // const mouseY = useRef(0);
 
-  useEffect(() => {
-    document.addEventListener("mousemove", (e) => {
-      let windowHalfX = window.innerWidth / 2;
-      let windowHalfY = window.innerHeight / 2;
-      mouseX.current = (e.clientX - windowHalfX) / 100;
-      mouseY.current = (e.clientY - windowHalfY) / 100;
-    });
-  }, []);
+  // useEffect(() => {
+  //   document.addEventListener("mousemove", (e) => {
+  //     let windowHalfX = window.innerWidth / 2;
+  //     let windowHalfY = window.innerHeight / 2;
+  //     mouseX.current = (e.clientX - windowHalfX) / 100;
+  //     mouseY.current = (e.clientY - windowHalfY) / 100;
+  //   });
+  // }, []);
 
-  useFrame(({ camera, scene }) => {
-    camera.position.x += (mouseX.current - camera.position.x) * 0.05;
-    camera.position.y += (-mouseY.current - camera.position.y) * 0.5;
-    camera.lookAt(scene.position);
-  });
+  // useFrame(({ camera, scene }) => {
+  //   camera.position.x += (mouseX.current - camera.position.x) * 0.05;
+  //   camera.position.y += (-mouseY.current - camera.position.y) * 0.5;
+  //   camera.lookAt(scene.position);
+  // });
   return (
     <PerspectiveCamera
       makeDefault
