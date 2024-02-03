@@ -28,6 +28,7 @@ precision highp float;
       uniform float u_time;
       uniform float u_frequency;
       uniform int u_audioPlaying;
+      uniform float u_noiseFactor;
 
       vec3 mod289(vec3 x)
       {
@@ -137,7 +138,7 @@ precision highp float;
 
           // Adjust the displacement when audio is playing
           if (u_audioPlaying != 0) {
-            float noise = 3.0 * pnoise(position + u_time, vec3(10.0));
+            float noise = u_noiseFactor * pnoise(position + u_time, vec3(10.0));
             displacement += (u_frequency / 50.) * (noise / 5.);
             // float displacement = pow((u_frequency / 30.) * (noise / 10.), 2.0);
           }

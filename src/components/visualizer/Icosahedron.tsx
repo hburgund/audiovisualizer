@@ -43,6 +43,16 @@ function Icosahedron() {
       min: 0.0,
       max: 1.0,
     },
+    noiseFactor: {
+      value: 3.0,
+      min: 0.0,
+      max: 10.0,
+      onChange: (value) => {
+        if (mesh.current) {
+          mesh.current.material.uniforms.u_noiseFactor.value = value;
+        }
+      },
+    },
     rotationSpeedX: {
       value: 0.005,
       min: 0.0,
@@ -201,24 +211,31 @@ function Icosahedron() {
       u_red: { value: 1.0 },
       u_green: { value: 1.0 },
       u_blue: { value: 1.0 },
+      u_noiseFactor: { value: 3.0 },
     };
   }, []);
 
   return (
-    <mesh ref={mesh}>
-      <shaderMaterial
-        uniforms={uniforms}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        wireframe
-      />
+    <>
+      <mesh ref={mesh}>
+        <shaderMaterial
+          uniforms={uniforms}
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+          wireframe
+        />
 
-      {geometry === "torus" ? (
-        <torusGeometry args={[geometryRadius, 0.7, 20, 80]} />
-      ) : (
-        <icosahedronGeometry args={[geometryRadius, 20]} />
-      )}
-    </mesh>
+        {geometry === "torus" ? (
+          <torusGeometry args={[geometryRadius, 0.7, 20, 80]} />
+        ) : (
+          <icosahedronGeometry args={[geometryRadius, 20]} />
+        )}
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshBasicMaterial color="black" wireframe opacity={1} />
+      </mesh>
+    </>
   );
 }
 
