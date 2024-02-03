@@ -5,6 +5,7 @@ import { useControls } from "leva";
 import {
   Audio,
   AudioAnalyser,
+  AudioContext,
   AudioListener,
   AudioLoader,
   IcosahedronGeometry,
@@ -20,7 +21,15 @@ function Icosahedron() {
   const mesh = useRef<Mesh<IcosahedronGeometry, ShaderMaterial>>(null);
 
   const [
-    { red, green, blue, rotationSpeedX, rotationSpeedY, geometry },
+    {
+      red,
+      green,
+      blue,
+      rotationSpeedX,
+      rotationSpeedY,
+      geometry,
+      geometryRadius,
+    },
     setParams,
   ] = useControls("Icosahedron", () => ({
     red: {
@@ -48,6 +57,11 @@ function Icosahedron() {
       value: "icosahedron",
       options: ["icosahedron", "torus"],
     },
+    geometryRadius: {
+      value: 2,
+      min: 1,
+      max: 5,
+    },
   }));
 
   const three = useThree();
@@ -55,7 +69,7 @@ function Icosahedron() {
   const sound = useRef<Audio>();
   const audioAnalyser = useRef<AudioAnalyser>();
 
-  const soundStartTime = useRef<number>(0);
+  const audioAnalyzer = useRef<AnalyserNode>();
 
   useEffect(() => {
     const listener = new AudioListener();
@@ -79,6 +93,7 @@ function Icosahedron() {
   const { mode } = useVisualizer();
 
   useEffect(() => {
+    let userMediaStream: MediaStream | undefined;
     if (mode === "speaking" && sound.current && !sound.current?.isPlaying) {
       // window.addEventListener("click", () => {
       //   if (sound.current) {
@@ -97,15 +112,33 @@ function Icosahedron() {
       if (sound.current?.isPlaying) {
         sound.current.stop();
       }
+    }
 
-      if (mode === "listening") {
-        // zero green blue
-        setParams({
-          red: 1.0,
-          green: 0.0,
-          blue: 0.0,
-        });
-      }
+    if (mode === "listening") {
+      // zero green blue
+      setParams({
+        red: 1.0,
+        green: 0.0,
+        blue: 0.0,
+      });
+
+      // from microphone
+      const constraints = { audio: true, video: false };
+
+      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        const context = AudioContext.getContext();
+        const source = context.createMediaStreamSource(stream);
+        audioAnalyzer.current = context.createAnalyser();
+        source.connect(audioAnalyzer.current);
+
+        userMediaStream = stream;
+      });
+    } else {
+      // stop getting audio
+      userMediaStream?.getTracks().forEach((track) => track.stop());
+      setParams({
+        geometryRadius: 2,
+      });
     }
   }, [mode]);
 
@@ -129,6 +162,24 @@ function Icosahedron() {
       mesh.current.material.uniforms.u_red.value = red;
       mesh.current.material.uniforms.u_green.value = green;
       mesh.current.material.uniforms.u_blue.value = blue;
+
+      // get the amplitude
+      if (mode === "listening" && audioAnalyzer.current) {
+        const array = new Uint8Array(audioAnalyzer.current.frequencyBinCount);
+
+        audioAnalyzer.current.getByteFrequencyData(array);
+
+        const average = array.reduce((a, b) => a + b, 0) / array.length;
+
+        function activation(x: number) {
+          // should be between 2 and 2.5
+          return (x / 255) * 3 + 2;
+        }
+
+        setParams({
+          geometryRadius: activation(average),
+        });
+      }
     }
   });
 
@@ -153,9 +204,9 @@ function Icosahedron() {
       />
 
       {geometry === "torus" ? (
-        <torusGeometry args={[1.5, 0.7, 20, 80]} />
+        <torusGeometry args={[geometryRadius, 0.7, 20, 80]} />
       ) : (
-        <icosahedronGeometry args={[2, 20]} />
+        <icosahedronGeometry args={[geometryRadius, 20]} />
       )}
     </mesh>
   );
