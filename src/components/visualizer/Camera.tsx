@@ -21,7 +21,7 @@ const Camera = () => {
   return (
     <PerspectiveCamera
       makeDefault
-      position={[0, -2, 14]}
+      position={[0, 0, 14]}
       fov={45}
       near={0.1}
       far={1000}
