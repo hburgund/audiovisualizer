@@ -8,6 +8,7 @@ import { useControls } from "leva";
 import { AudioContext, AudioListener, Vector2 } from "three";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { useVisualizer } from "../../context/VisualizerContext";
+import { useAudioContext } from "../../context/AudioContext";
 
 extend({ UnrealBloomPass, OutputPass, RenderPass });
 
@@ -44,10 +45,6 @@ const EffectsComposer = () => {
   useEffect(() => {
     let userMediaStream: MediaStream | undefined;
     if (mode === "listening") {
-      const listener = new AudioListener();
-
-      camera.add(listener);
-
       // create an audio source
       // const sound = new Audio(listener);
 
