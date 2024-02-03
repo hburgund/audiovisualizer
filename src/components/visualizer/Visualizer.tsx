@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { SRGBColorSpace } from "three";
-import AudioContextProvider from "../../context/AudioContext";
+import { AudioContextContext } from "../../context/AudioContext";
 import {
   VisualizerContext,
   VisualizerContextType,
@@ -14,10 +14,13 @@ type Props = {
   setMode: (mode: VisualizerContextType["mode"]) => void;
 
   displayText: string;
+
+  audioContext: AudioContext;
 };
-function Visualizer({ mode, setMode, displayText }: Props) {
+
+function Visualizer({ mode, setMode, displayText, audioContext }: Props) {
   return (
-    <AudioContextProvider>
+    <AudioContextContext.Provider value={audioContext}>
       <VisualizerContext.Provider
         value={{
           mode,
@@ -56,7 +59,7 @@ function Visualizer({ mode, setMode, displayText }: Props) {
           </div>
         </div>
       </VisualizerContext.Provider>
-    </AudioContextProvider>
+    </AudioContextContext.Provider>
   );
 }
 

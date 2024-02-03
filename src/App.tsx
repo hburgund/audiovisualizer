@@ -1,5 +1,5 @@
 import { useControls } from "leva";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Visualizer from "./components/visualizer/Visualizer";
 import { VisualizerContextType } from "./context/VisualizerContext";
 
@@ -16,11 +16,14 @@ function App() {
     },
   }));
 
+  const audioContext = useMemo(() => new AudioContext(), []);
+
   return (
     <Visualizer
       mode={mode}
       setMode={setMode}
       displayText="Welcome to the visualizer"
+      audioContext={audioContext}
     />
   );
 }

@@ -16,6 +16,7 @@ import { fragmentShader, vertexShader } from "../../three/shaders";
 
 import welcomeAudio from "../../assets/kelcey-welcome2.mp3";
 import { useVisualizer } from "../../context/VisualizerContext";
+import { useAudioContext } from "../../context/AudioContext";
 
 function Icosahedron() {
   const mesh = useRef<Mesh<IcosahedronGeometry, ShaderMaterial>>(null);
@@ -71,7 +72,11 @@ function Icosahedron() {
 
   const audioAnalyzer = useRef<AnalyserNode>();
 
+  const audioContext = useAudioContext();
+
   useEffect(() => {
+    AudioContext.setContext(audioContext);
+
     const listener = new AudioListener();
     three.camera.add(listener);
     sound.current = new Audio(listener);
