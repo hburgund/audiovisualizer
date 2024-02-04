@@ -7,18 +7,14 @@ import {
   AudioAnalyser,
   AudioContext,
   AudioListener,
-  Color,
   IcosahedronGeometry,
   Mesh,
-  PointLight,
   ShaderMaterial,
-  Vector3,
 } from "three";
 import { fragmentShader, vertexShader } from "../../three/shaders";
 
 import { useAudioContext } from "../../context/AudioContext";
 import { useVisualizer } from "../../context/VisualizerContext";
-import PointLightWithHelper from "./PointLightWithHelper";
 
 function Icosahedron() {
   const mesh = useRef<Mesh<IcosahedronGeometry, ShaderMaterial>>(null);

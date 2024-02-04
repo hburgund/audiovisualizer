@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "src/index.tsx",
+  "files": [
+    "src"
+  ],
   "scripts": {
     "dev": "vite --port 2345",
     "build": "tsc && vite build",
