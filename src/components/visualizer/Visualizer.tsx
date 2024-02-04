@@ -8,6 +8,8 @@ import {
 import Camera from "./Camera";
 import Effect from "./Effects";
 import Icosahedron from "./Icosahedron";
+import { useEffect, useState } from "react";
+import FadeText from "./FadeText";
 
 type Props = {
   mode: VisualizerContextType["mode"];
@@ -44,18 +46,7 @@ function Visualizer({ mode, setMode, displayText, audioContext }: Props) {
             <Effect />
           </Canvas>
           {/* display a text */}
-          <div
-            style={{
-              position: "fixed",
-              top: "80%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              color: "white",
-              fontSize: "2rem",
-            }}
-          >
-            {displayText}
-          </div>
+          <FadeText text={displayText} />
         </div>
       </VisualizerContext.Provider>
     </AudioContextContext.Provider>
