@@ -25,8 +25,8 @@ function App() {
 
   useEffect(() => {
     function activateAudioContext() {
+      if (audioContext.state === "running") return;
       audioContext.resume();
-      document.removeEventListener("click", activateAudioContext);
     }
     document.addEventListener("click", activateAudioContext);
     return () => {
