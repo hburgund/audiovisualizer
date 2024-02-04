@@ -118,7 +118,7 @@ function Icosahedron() {
       audioElement.removeEventListener("play", onPlay);
       audioElement.removeEventListener("pause", onPause);
     };
-  }, []);
+  }, [audioContext]);
 
   const { mode } = useVisualizer();
 

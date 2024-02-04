@@ -1,5 +1,5 @@
 import { useControls } from "leva";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Visualizer from "./components/visualizer/Visualizer";
 import { VisualizerContextType } from "./context/VisualizerContext";
 import audio from "./assets/kelcey-welcome2.mp3";
@@ -16,7 +16,23 @@ function App() {
     },
   }));
 
-  const audioContext = useMemo(() => new AudioContext(), []);
+  const audioContext = useMemo(() => {
+    const audioContext = new (window.AudioContext ||
+      // @ts-ignore
+      window.webkitAudioContext)();
+    return audioContext;
+  }, []);
+
+  useEffect(() => {
+    function activateAudioContext() {
+      audioContext.resume();
+      document.removeEventListener("click", activateAudioContext);
+    }
+    document.addEventListener("click", activateAudioContext);
+    return () => {
+      document.removeEventListener("click", activateAudioContext);
+    };
+  }, []);
 
   return (
     <div>
